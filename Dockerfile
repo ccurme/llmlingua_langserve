@@ -1,14 +1,21 @@
-FROM python:3.10
+FROM python:3.11-slim
 
-WORKDIR /llmlingua_langserve
+RUN pip install poetry==1.6.1
 
-COPY . /llmlingua_langserve
+RUN poetry config virtualenvs.create false
 
-RUN pip install poetry
-RUN poetry install
+WORKDIR /code
 
-EXPOSE 8000
+COPY ./pyproject.toml ./README.md ./poetry.lock* ./
 
-ENV HOST=0.0.0.0
-ENV PORT=8000
-CMD ["poetry", "run", "python", "llmlingua_langserve/langserver.py"]
+COPY ./packages ./packages
+
+RUN poetry install  --no-interaction --no-ansi --no-root
+
+COPY ./app ./app
+
+RUN poetry install --no-interaction --no-ansi
+
+EXPOSE 8080
+
+CMD exec uvicorn app.server:app --host 0.0.0.0 --port 8080
