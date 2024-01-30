@@ -6,8 +6,7 @@ from langchain_core.runnables import RunnableLambda
 from langserve import add_routes
 from llmlingua import PromptCompressor
 
-HOST = os.getenv("HOST", "localhost")
-PORT = int(os.getenv("PORT", 8000))
+HOST = os.getenv("HOST", "0.0.0.0")
 
 app = FastAPI(
     title="LLMLingua Server",
@@ -31,4 +30,4 @@ add_routes(
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host=HOST, port=PORT)
+    uvicorn.run(app, host=HOST, port=8080)
